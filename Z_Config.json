@@ -1,0 +1,70 @@
+﻿{
+  "AutoCloseConsole": false,
+  "LogPath": "Logs",
+  "DbRetryCount": 5,
+  "Project": [
+    {
+      "Name": "localhost-db-dev",
+      "ScriptPath": "database\\opmc-db",
+      "ConnectString": "Data Source=.\\SQLEXPRESS;Initial Catalog=DEV_LuckyMilk;Persist Security Info=True;User ID=sa;Password=wolf3d",
+      "Strategy": [
+        "base",
+        "Dev"
+      ],
+      "ignoreFile": [],
+      "ClearAllSp": false,
+      "ClearAllTable": false
+    },
+    {
+      "Name": "localhost-db-qat",
+      "ScriptPath": "database\\localhost-db",
+      "ConnectString": "Data Source=.\\SQLEXPRESS;Initial Catalog=SPGenerator;Persist Security Info=True;User ID=sa;Password=wolf3d",
+      "Strategy": [
+        "base",
+        "Qat"
+      ],
+      "ignoreFile": [],
+      "ClearAllSp": false,
+      "ClearAllTable": false
+    },
+    {
+      "Name": "localhost-db-prd",
+      "ScriptPath": "database\\localhost-db",
+      "ConnectString": "Data Source=.\\SQLEXPRESS;Initial Catalog=SPGenerator;Persist Security Info=True;User ID=sa;Password=wolf3d",
+      "Strategy": [
+        "base",
+        "Prd"
+      ],
+      "ignoreFile": [],
+      "ClearAllSp": false,
+      "ClearAllTable": false
+    }
+  ],
+  "ActPlans": [
+    {
+      "Name": "base",
+      "RunDowns": [
+        "00_schema",
+        "10_tables",
+        "20_initial_data",
+        "30_foreign_keys",
+        "32_indexes",
+        "40_views",
+        "50_functions",
+        "60_stored_procedures"
+      ]
+    },
+    {
+      "Name": "Dev",
+      "RunDowns": [ "70_EnvironmentSetting\\Dev" ]
+    },
+    {
+      "Name": "Qat",
+      "RunDowns": [ "70_EnvironmentSetting\\Qat" ]
+    },
+    {
+      "Name": "Prd",
+      "RunDowns": [ "70_EnvironmentSetting\\Prd" ]
+    }
+  ]
+}

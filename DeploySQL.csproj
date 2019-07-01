@@ -1,0 +1,1263 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8240F3ED-1531-4A0E-9EFA-BC933F994933}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>DeploySQL</RootNamespace>
+    <AssemblyName>Z_DeploySQL</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DeploySQL.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DeploySQL.Designer.cs">
+      <DependentUpon>DeploySQL.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Tools\RemoveHelper.cs" />
+    <Compile Include="Tools\DbHelper.cs" />
+    <Compile Include="Models\Configs.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tools\LogHelper.cs" />
+    <Compile Include="Tools\RetryHelper.cs" />
+    <Compile Include="Tools\TimeMeasureScope.cs" />
+    <EmbeddedResource Include="DeploySQL.resx">
+      <DependentUpon>DeploySQL.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <None Include="Z_Config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="database\auditlog-db\00_schema\README.md" />
+    <None Include="database\auditlog-db\10_tables\README.md" />
+    <None Include="database\auditlog-db\20_initial_data\README.md" />
+    <None Include="database\auditlog-db\30_foreign_keys\README.md" />
+    <None Include="database\auditlog-db\32_indexes\README.md" />
+    <None Include="database\auditlog-db\35_alters\README.md" />
+    <None Include="database\auditlog-db\40_views\README.md" />
+    <None Include="database\auditlog-db\50_functions\README.md" />
+    <None Include="database\auditlog-db\60_stored_procedures\README.md" />
+    <None Include="database\auditlog-db\99_others\README.md" />
+    <None Include="database\bumc-db\50_functions\README.md" />
+    <None Include="database\bumc-db\DeploySQL.bat" />
+    <None Include="database\bumc-db\DeploySQLKeepData.bat" />
+    <None Include="database\bumc-db\DeploySQLUnitTesting.bat" />
+    <None Include="database\opmcReport-db\50_functions\README.md" />
+    <None Include="database\opmcReport-db\DeploySQL.bat" />
+    <None Include="database\opmcReport-db\DeploySQLKeepData.bat" />
+    <None Include="database\opmcReport-db\DeploySQLUnitTesting.bat" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="database\auditlog-db\10_tables\dbo.AuditLog.Table.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\auditlog-db\10_tables\dbo.IPLocation.Table.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\auditlog-db\32_indexes\dbo.IPLocation.Index.sql" />
+    <Content Include="database\auditlog-db\35_alters\dbo.AuditLog.Table.sql" />
+    <Content Include="database\auditlog-db\50_functions\dbo.LongIPToLocation.UserDefinedFunction.sql" />
+    <Content Include="database\auditlog-db\50_functions\dbo.Split.UserDefinedFunction.sql" />
+    <Content Include="database\auditlog-db\50_functions\dbo.ToLongIP.UserDefinedFunction.sql" />
+    <Content Include="database\auditlog-db\60_stored_procedures\dbo.GetAuditLogs.sql" />
+    <Content Include="database\auditlog-db\60_stored_procedures\dbo.InsertAuditLog.sql" />
+    <Content Include="database\bumc-db\00_schema\Bu.Schema.sql" />
+    <Content Include="database\bumc-db\00_schema\Game.Schema.sql" />
+    <Content Include="database\bumc-db\00_schema\infra.Schema.sql" />
+    <Content Include="database\bumc-db\00_schema\member.Schema.sql" />
+    <Content Include="database\bumc-db\00_schema\Monitor.Schema.sql" />
+    <Content Include="database\bumc-db\00_schema\Report.Schema.sql" />
+    <Content Include="database\bumc-db\00_schema\system.Schema.sql" />
+    <Content Include="database\bumc-db\10_tables\Bu.BoundsLimitTemplate.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\Bu.BoundsLimitTemplateDetail.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\Bu.Bu.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\Bu.BuLimitTemplate.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\Bu.BuLimitTemplateDetail.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\Bu.BuMaintainceNotify.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\Bu.BuOddsTemplate.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\Bu.BuOddsTemplateDetail.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\Bu.BuSetting.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\Bu.BuUsingTemplate.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\Bu.BuWebSite.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\Bu.GameExpectBetOnOdds.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\Bu.GameExpectBetOnStatistics.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\Bu.GameSetting.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\Game.Bets.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\Game.BetsBak.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\Game.BetTypeBetOnDef.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\Game.BetTypePlayDef.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\Game.FollowPlanBets.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\Game.FollowPlans.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\Game.LotteryCodes.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\infra.CountryBlock.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\infra.DomainInfo.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\infra.Routing.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\infra.ServerInfo.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\Member.Member.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\member.MemberLevel.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\member.MemberLoginHistory.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\member.MemberSetting.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\Member.MemberWalletLogs.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\Member.MemberWallets.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\Member.MemberWalletTransactions.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\member.OffLineMember.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\Member.QuickMoneySetting.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\system.AgreeIP.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\system.Configs.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\system.Country.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\System.Menu.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\system.Role.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\system.RoleGameSetting.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\system.RoleMenu.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\system.User.Table.sql" />
+    <Content Include="database\bumc-db\10_tables\system.UserLoginHistory.Table.sql" />
+    <Content Include="database\bumc-db\20_initial_data\Bu.BoundsLimitTemplate.Data.sql" />
+    <Content Include="database\bumc-db\20_initial_data\Bu.BoundsLimitTemplateDetail.Data.sql" />
+    <Content Include="database\bumc-db\20_initial_data\Bu.Bu.Data.sql" />
+    <Content Include="database\bumc-db\20_initial_data\Bu.BuLimitTemplate.Data.sql" />
+    <Content Include="database\bumc-db\20_initial_data\Bu.BuLimitTemplateDetail.Data.sql" />
+    <Content Include="database\bumc-db\20_initial_data\Bu.BuOddsTemplate.Data.sql" />
+    <Content Include="database\bumc-db\20_initial_data\Bu.BuOddsTemplateDetail.Data.sql" />
+    <Content Include="database\bumc-db\20_initial_data\Bu.GameSetting.Data.sql" />
+    <Content Include="database\bumc-db\20_initial_data\Game.BetTypeBetOnDef.Data.sql" />
+    <Content Include="database\bumc-db\20_initial_data\Game.BetTypeBetOnDef_Official.Data.sql" />
+    <Content Include="database\bumc-db\20_initial_data\Game.BetTypePlayDef.Data.sql" />
+    <Content Include="database\bumc-db\20_initial_data\Game.BetTypePlayDef_Official.Data.sql" />
+    <Content Include="database\bumc-db\20_initial_data\Game.LotteryCodes.Data.sql" />
+    <Content Include="database\bumc-db\20_initial_data\infra.DomainInfo.Data.sql" />
+    <Content Include="database\bumc-db\20_initial_data\infra.Routing.Data.sql" />
+    <Content Include="database\bumc-db\20_initial_data\infra.ServerInfo.Data.sql" />
+    <Content Include="database\bumc-db\20_initial_data\infra.System.AgreeIP.sql" />
+    <Content Include="database\bumc-db\20_initial_data\system.Configs.Data.sql" />
+    <Content Include="database\bumc-db\20_initial_data\System.Country.sql" />
+    <Content Include="database\bumc-db\20_initial_data\System.Menu.Data.sql" />
+    <Content Include="database\bumc-db\35_alters\AddColumn.sql" />
+    <Content Include="database\bumc-db\35_alters\changeBetTypePlayCodePos.sql" />
+    <Content Include="database\bumc-db\35_alters\changeBetTypePlayCodeStatus.sql" />
+    <Content Include="database\bumc-db\35_alters\changeBetTypePlayName.sql" />
+    <Content Include="database\bumc-db\50_functions\dbo.LongIPToLocation.UserDefinedFunction.sql" />
+    <Content Include="database\bumc-db\50_functions\dbo.Split.UserDefinedFunction.sql" />
+    <Content Include="database\bumc-db\50_functions\dbo.ToLongIP.UserDefinedFunction.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.CalcGameExpectBetOnStatistics.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.CreateGameExpectBetTypeOddsInfo.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.GetBetTypePlayCode.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.GetBetTypePlayDef.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.GetBuList.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.GetPlayGameExpectBetOn.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.GetPlayGameExpectBetOnOdd.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.GetPlayGameExpectBetOnOddTemplateID.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.ImportBoundsLimitTemplateDetail.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.ImportBuLimitTemplateDetail.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.ImportBuOddsTemplateDetail.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.ImportGameExpectOddsByDiffOdds.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.InsertBuOddsTemplateDetailByBU.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.UpdateGameExpectOddsByDiffOdds.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_DeleteBuUsingTemplate.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_DeleteBuWebSite.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_GetBoundsLimitTemplate.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_GetBoundsLimitTemplateDetail.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_GetBu.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_GetBuLimitTemplate.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_GetBuLimitTemplateDetail.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_GetBuMaintainceNotify.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_GetBuOddsTemplate.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_GetBuOddsTemplateDetail.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_GetBuSetting.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_GetBuUsingTemplate.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_GetBuWebSite.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_GetGameExpectBetOnOdds.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_GetGameExpectBetOnStatistics.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_GetGameSetting.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_InsertBoundsLimitTemplate.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_InsertBoundsLimitTemplateDetail.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_InsertBu.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_InsertBuLimitTemplate.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_InsertBuLimitTemplateDetail.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_InsertBuMaintainceNotify.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_InsertBuOddsTemplate.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_InsertBuOddsTemplateDetail.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_InsertBuSetting.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_InsertBuUsingTemplate.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_InsertBuWebSite.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_InsertGameExpectBetOnOdds.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_InsertGameExpectBetOnStatistics.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_InsertGameSetting.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_SyncBoundsLimitTemplate.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_SyncBoundsLimitTemplateDetail.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_SyncBu.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_SyncBuLimitTemplate.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_SyncBuOddsTemplate.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_SyncBuUsingTemplate.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_SyncBuWebSite.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_SyncGameSetting.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_UpdateBoundsLimitTemplate.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_UpdateBoundsLimitTemplateDetail.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_UpdateBu.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_UpdateBuLimitTemplate.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_UpdateBuLimitTemplateDetail.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_UpdateBuOddsTemplate.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_UpdateBuOddsTemplateDetail.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_UpdateBuSetting.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_UpdateBuWebSite.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_UpdateGameExpectBetOnOdds.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_UpdateGameExpectBetOnStatistics.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Bu.Z_UpdateGameSetting.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.AutoCompleteFollowPlans.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.BetBackup.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.CancelBet.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.CancelFollowPlan.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.CompleteFollowPlan.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.CreateFollowPlan.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.FindWinningFollowPlan.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.GetBetLimitInfo.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.GetBetList.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.GetBetListByBuAndLastModifiedAt.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.GetBetListForCalcOnStatistics.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.GetBetsClosedCount.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.GetCurrentGameOdds.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.GetFollowPlanByID.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.GetGameExpectBetTypeOddsInfo.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.GetPlanFollowBetDetail.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.GetPlanFollowBetDetailList.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.GetPlanFollowBetList.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.GetReadyForFollowBet.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.GetSettlingBetList.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.InsertFollowPlanBet.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.PatchPlanFollowBet.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.PlaceBet.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.PlaceFollowBet.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.RecoverBet.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.SettleBet.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.UpdateBetOdds.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.UpdateBetStatus.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.UpdateFollowPlan.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.Z_GetBets.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.Z_GetBetsBak.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.Z_GetBetTypeBetOnDef.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.Z_GetBetTypePlayDef.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.Z_GetLotteryCodes.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.Z_InsertBets.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.Z_InsertBetTypeBetOnDef.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.Z_InsertBetTypePlayDef.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.Z_InsertLotteryCodes.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.Z_SyncBetTypeBetOnDef.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.Z_SyncBetTypePlayDef.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.Z_SyncLotteryCodes.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.Z_UpdateBets.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.Z_UpdateBetTypeBetOnDef.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.Z_UpdateBetTypePlayDef.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Game.Z_UpdateLotteryCodes.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\infra.Z_DeleteDomainInfo.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\infra.Z_DeleteRouting.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\infra.Z_DeleteServerInfo.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\infra.Z_GetCountryBlock.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\infra.Z_GetDomainInfo.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\infra.Z_GetRouting.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\infra.Z_GetServerInfo.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\infra.Z_InsertCountryBlock.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\infra.Z_InsertDomainInfo.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\infra.Z_InsertRouting.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\infra.Z_InsertServerInfo.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\infra.Z_SyncCountryBlock.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\infra.Z_SyncDomainInfo.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\infra.Z_SyncRouting.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\infra.Z_SyncServerInfo.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\infra.Z_UpdateCountryBlock.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\infra.Z_UpdateDomainInfo.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\infra.Z_UpdateRouting.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\infra.Z_UpdateServerInfo.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Member.DeleteMemberLevel.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Member.GetDailyGroupWagerList.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Member.GetMemberInformation.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\member.GetMemberLatestModified.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\member.GetMemberWalletAfterMainTain.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\member.GetMemberWalletLogs.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\member.GetMemberWalletTransactions.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Member.GetMemberWinloss.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\member.MemberLevelPromotion.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Member.TransferMemberWallet.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Member.UpdateQuickMoneySetting.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\member.Z_DeleteOffLineMember.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\member.Z_GetMember.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\member.Z_GetMemberLevel.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\member.Z_GetMemberLoginHistory.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\member.Z_GetMemberSetting.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\member.Z_GetMemberWalletLogs.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\member.Z_GetMemberWallets.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\member.Z_GetMemberWalletTransactions.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\member.Z_GetOffLineMember.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\member.Z_GetQuickMoneySetting.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\member.Z_InsertMember.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\member.Z_InsertMemberLevel.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\member.Z_InsertMemberLoginHistory.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\member.Z_InsertMemberSetting.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\member.Z_InsertMemberWalletLogs.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\member.Z_InsertMemberWallets.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\member.Z_InsertMemberWalletTransactions.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\member.Z_InsertOffLineMember.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\member.Z_InsertQuickMoneySetting.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\member.Z_UpdateMember.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\member.Z_UpdateMemberLevel.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\member.Z_UpdateMemberLoginHistory.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\member.Z_UpdateMemberSetting.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\member.Z_UpdateMemberWalletLogs.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\member.Z_UpdateMemberWallets.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\member.Z_UpdateMemberWalletTransactions.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\member.Z_UpdateQuickMoneySetting.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Report.CheckReportForGC.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Report.GetBetProfitForBetTypePlayCode.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Report.GetBetProfitForLotteryCode.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Report.GetBetProfitForMember.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Report.GetBetReportForStatus.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Report.GetLotteryBetsBak.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Report.GetMemberLevel.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\Report.GetTransDataForGC].sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\system.GetBuAgreeIP.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\system.Z_DeleteAgreeIP.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\system.Z_GetAgreeIP.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\system.Z_GetConfigs.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\system.Z_GetCountry.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\System.Z_GetMenu.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\system.Z_GetRole.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\system.Z_GetRoleGameSetting.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\system.Z_GetRoleMenu.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\system.Z_GetUser.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\system.Z_GetUserLoginHistory.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\system.Z_InsertAgreeIP.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\system.Z_InsertConfigs.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\system.Z_InsertCountry.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\System.Z_InsertMenu.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\system.Z_InsertRole.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\system.Z_InsertRoleGameSetting.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\system.Z_InsertRoleMenu.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\system.Z_InsertUser.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\system.Z_InsertUserLoginHistory.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\system.Z_SyncAgreeIP.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\system.Z_SyncCountry.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\system.Z_SyncRoleGameSetting.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\system.Z_UpdateAgreeIP.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\system.Z_UpdateConfigs.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\system.Z_UpdateCountry.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\System.Z_UpdateMenu.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\system.Z_UpdateRole.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\system.Z_UpdateRoleGameSetting.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\system.Z_UpdateRoleMenu.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\system.Z_UpdateUser.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\60_stored_procedures\system.Z_UpdateUserLoginHistory.StoredProcedure.sql" />
+    <Content Include="database\bumc-db\99_tools\ResetMemberDataForTest.sql" />
+    <Content Include="database\localhost-db\00_schema\Bu.Schema.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\localhost-db\10_tables\Bu.GameExpectBetOnOdds.Table.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\localhost-db\60_stored_procedures\Bu.Z_GetGameExpectBetOnOdds.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\localhost-db\60_stored_procedures\Bu.Z_InsertGameExpectBetOnOdds.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\localhost-db\60_stored_procedures\Bu.Z_UpdateGameExpectBetOnOdds.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\00_schema\Bu.Schema.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\00_schema\Game.Schema.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\00_schema\infra.Schema.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\00_schema\Opmc.Schema.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\00_schema\system.Schema.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\10_tables\00.DropAllForeignKeys_Lottery.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\10_tables\Bu.BoundsLimitTemplate.Table.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\10_tables\Bu.BoundsLimitTemplateDetail.Table.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\10_tables\Bu.Bu.Table.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\10_tables\Bu.BuLimitTemplate.Table.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\10_tables\Bu.BuLimitTemplateDetail.Table.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\10_tables\Bu.BuOddsTemplate.Table.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\10_tables\Bu.BuOddsTemplateDetail.Table.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\10_tables\Bu.BuUsingTemplate.Table.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\10_tables\Bu.BuWebSite.Table.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\10_tables\Bu.GameExpectBetOnOdds.Table.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\10_tables\Bu.GameExpectBetOnStatistics.Table.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\10_tables\Bu.GameSetting.Table.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\10_tables\Game.BetTypeBetOnDef.Table.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\10_tables\Game.BetTypePlayDef.Table.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\10_tables\Game.LotteryCodes.Table.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\10_tables\Game.LotteryGames.Table.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\10_tables\Game.LotteryResult.Table.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\10_tables\Game.LotterySchedule.Table.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\10_tables\infra.CountryBlock.Table.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\10_tables\infra.DomainInfo.Table.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\10_tables\infra.Routing.Table.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\10_tables\infra.ServerInfo.Table.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\10_tables\system.AgreeIP.Table.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\10_tables\system.Configs.Table.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\10_tables\system.Country.Table.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\10_tables\system.Maintain.Table.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\10_tables\System.Marquees.Table.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\10_tables\system.Menu.Table.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\10_tables\system.Role.Table.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\10_tables\system.RoleGameSetting.Table.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\10_tables\system.RoleMenu.Table.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\10_tables\system.Songs.Table.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\10_tables\system.User.Table.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\10_tables\system.UserLoginHistory.Table.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Bu.BoundsLimitTemplate.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Bu.BoundsLimitTemplateDetail.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Bu.Bu.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Bu.BuLimitTemplate.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Bu.BuLimitTemplateDetail.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Bu.BuOddsTemplate.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Bu.BuOddsTemplateDetail.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Bu.GameSetting.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Game.BetTypeBetOnDef.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Game.BetTypeBetOnDef_Official.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Game.BetTypePlayDef.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Game.BetTypePlayDef_Official.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Game.LotteryCodes.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Game.LotterySchedule_BJK3.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Game.LotterySchedule_BJPC28.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Game.LotterySchedule_BJPK10.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Game.LotterySchedule_CQSSC.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Game.LotterySchedule_CROWNPK10.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Game.LotterySchedule_CROWNX11X5.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Game.LotterySchedule_GD11X5.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Game.LotterySchedule_GSK3.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Game.LotterySchedule_JL11X5.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Game.LotterySchedule_JLK3.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Game.LotterySchedule_JLSSC.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Game.LotterySchedule_JSK3.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Game.LotterySchedule_MLAFT.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Game.LotterySchedule_NMGK3.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Game.LotterySchedule_QUICKK3.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Game.LotterySchedule_QUICKPC28.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Game.LotterySchedule_QUICKSSC.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Game.LotterySchedule_QUICKX11X5.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Game.LotterySchedule_SXL11X5.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Game.LotterySchedule_TENK3.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Game.LotterySchedule_TENPK10.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Game.LotterySchedule_TENSSC.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Game.LotterySchedule_TENX11X5.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Game.LotterySchedule_THREEK3.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Game.LotterySchedule_THREEPC28.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Game.LotterySchedule_THREEPK10.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Game.LotterySchedule_THREESSC.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Game.LotterySchedule_THREEX11X5.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Game.LotterySchedule_TTK3.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Game.LotterySchedule_TTPK10.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\Game.LotterySchedule_TTSSC.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\infra.DomainInfo.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\infra.Routing.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\infra.ServerInfo.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\system.Configs.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\System.Country.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\system.Maintain.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\System.Menu.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\system.Role.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\system.Songs.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\20_initial_data\system.User.Data.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\35_alters\addCol.sql" />
+    <Content Include="database\opmc-db\35_alters\changeBetTypePlayCodePos.sql" />
+    <Content Include="database\opmc-db\35_alters\changeBetTypePlayCodeStatus.sql" />
+    <Content Include="database\opmc-db\35_alters\changeBetTypePlayName.sql" />
+    <Content Include="database\opmc-db\35_alters\LotteryCodes 新增欄位OpenResultUrl.sql" />
+    <Content Include="database\opmc-db\35_alters\struct.sql" />
+    <Content Include="database\opmc-db\35_alters\system.Menu.sql" />
+    <Content Include="database\opmc-db\35_alters\[自開彩][OPMC] 賽程表設定頁\[Game].[DeleteGameScheduleByLotteryCodeAndDayOfWeek].sql" />
+    <Content Include="database\opmc-db\35_alters\[自開彩][OPMC] 開獎結果頁\Agency.AgentLoginHistory.Table.sql" />
+    <Content Include="database\opmc-db\35_alters\[自開彩][OPMC] 開獎結果頁\dbo.Member.Table.sql" />
+    <Content Include="database\opmc-db\35_alters\[自開彩][OPMC] 開獎結果頁\dbo.MemberLoginHistory.Table.sql" />
+    <Content Include="database\opmc-db\35_alters\[自開彩][OPMC] 開獎結果頁\Game.Bets.Table.sql" />
+    <Content Include="database\opmc-db\35_alters\[自開彩][OPMC] 開獎結果頁\Game.LotteryCodes.Table.sql" />
+    <Content Include="database\opmc-db\35_alters\[自開彩][OPMC] 開獎結果頁\Game.LotteryGames.Table.sql" />
+    <Content Include="database\opmc-db\35_alters\[自開彩][OPMC] 開獎結果頁\Game.LotteryResult.Table.sql" />
+    <Content Include="database\opmc-db\35_alters\[自開彩][OPMC] 開獎結果頁\[dbo].[GetAccountListByIP].sql" />
+    <Content Include="database\opmc-db\35_alters\[自開彩][OPMC] 開獎結果頁\[Game].[GetLotteryCodes].sql" />
+    <Content Include="database\opmc-db\35_alters\[自開彩][OPMC] 開獎結果頁\[Game].[GetLotteryGameResultsByCodeAndDate].sql" />
+    <Content Include="database\opmc-db\35_alters\[自開彩][OPMC] 開獎結果頁\[Game].[GetLotteryGameResultsForCache].sql" />
+    <Content Include="database\opmc-db\50_functions\dbo.Split.UserDefinedFunction.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.CloneBoundsLimitTemplateDetail.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.CloneBuLimitTemplateDetail.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.CloneBuOddsTemplateDetail.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.CloneBuOddsTemplateDetailByLotteryCode.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.CreateBoundsLimitTemplateDetail.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.CreateBuLimitTemplateDetail.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.CreateBuOddsTemplateDetail.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.CreateGameExpectBetTypeOddsInfo.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.GetBetOddsTypePlayDef.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.GetBetOnDefList.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.GetBetTypePlayCode.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.GetBetTypePlayDef.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.GetBetTypePlayDefList.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.GetBoundLimitBetTypePlayDef.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.GetBuPlayGameOpenTypeDef.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.GetPlayGameExpectBetOn.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.UpdateBuOddsTemplateByDiffOdds.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.UpdateBuOddsTemplateByDiffOddsForSync.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.Z_DeleteBuUsingTemplate.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.Z_DeleteBuWebSite.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.Z_GetBoundsLimitTemplate.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.Z_GetBoundsLimitTemplateDetail.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.Z_GetBu.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.Z_GetBuLimitTemplate.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.Z_GetBuLimitTemplateDetail.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.Z_GetBuOddsTemplate.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.Z_GetBuOddsTemplateDetail.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.Z_GetBuUsingTemplate.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.Z_GetBuWebSite.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.Z_GetGameExpectBetOnOdds.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.Z_GetGameExpectBetOnStatistics.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.Z_GetGameSetting.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.Z_InsertBoundsLimitTemplate.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.Z_InsertBoundsLimitTemplateDetail.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.Z_InsertBu.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.Z_InsertBuLimitTemplate.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.Z_InsertBuLimitTemplateDetail.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.Z_InsertBuOddsTemplate.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.Z_InsertBuOddsTemplateDetail.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.Z_InsertBuUsingTemplate.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.Z_InsertBuWebSite.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.Z_InsertGameExpectBetOnOdds.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.Z_InsertGameExpectBetOnStatistics.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.Z_InsertGameSetting.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.Z_UpdateBoundsLimitTemplate.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.Z_UpdateBoundsLimitTemplateDetail.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.Z_UpdateBu.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.Z_UpdateBuLimitTemplate.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.Z_UpdateBuLimitTemplateDetail.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.Z_UpdateBuOddsTemplate.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.Z_UpdateBuOddsTemplateDetail.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.Z_UpdateBuWebSite.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.Z_UpdateGameExpectBetOnOdds.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.Z_UpdateGameExpectBetOnStatistics.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Bu.Z_UpdateGameSetting.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Game.CreateLotteryGame.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Game.DeleteGameSchedule.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Game.DeleteGameScheduleByLotteryCodeAndDayOfWeek.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Game.GetGameSchedules.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Game.GetLastSeqNoByLotteryCode.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Game.GetLatestLotteryExpectID.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Game.GetLotteryCodes.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Game.GetLotteryGameResultsByCodeAndDate.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Game.GetLotteryGameResultsForCache.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Game.GetLotteryGames.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Game.GetLotteryGamesByMode.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Game.GetLotteryResult.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Game.ImportLotterySchedule.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Game.InsertGameSchedule.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Game.InsertLotteryResult.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Game.UpdateGameExpectBetOnStatisticsForSchdule.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Game.UpdateGameExpectOddsByDiffOdds.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Game.UpdateLotteryCodeData.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Game.UpdateLotteryGame.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Game.UpdateLotteryResult.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Game.Z_GetBetTypeBetOnDef.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Game.Z_GetBetTypePlayDef.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Game.Z_GetLotteryCodes.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Game.Z_GetLotteryGames.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Game.Z_GetLotteryResult.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Game.Z_GetLotterySchedule.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Game.Z_InsertBetTypeBetOnDef.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Game.Z_InsertBetTypePlayDef.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Game.Z_InsertLotteryCodes.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Game.Z_InsertLotteryGames.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Game.Z_InsertLotteryResult.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Game.Z_InsertLotterySchedule.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Game.Z_UpdateBetTypeBetOnDef.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Game.Z_UpdateBetTypePlayDef.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Game.Z_UpdateLotteryCodes.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Game.Z_UpdateLotteryGames.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Game.Z_UpdateLotteryResult.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\Game.Z_UpdateLotterySchedule.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\infra.Z_DeleteDomainInfo.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\infra.Z_DeleteRouting.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\infra.Z_DeleteServerInfo.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\infra.Z_GetCountryBlock.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\infra.Z_GetDomainInfo.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\infra.Z_GetRouting.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\infra.Z_GetServerInfo.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\infra.Z_InsertCountryBlock.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\infra.Z_InsertDomainInfo.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\infra.Z_InsertRouting.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\infra.Z_InsertServerInfo.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\infra.Z_UpdateCountryBlock.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\infra.Z_UpdateDomainInfo.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\infra.Z_UpdateRouting.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\infra.Z_UpdateServerInfo.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\System.DeleteMarquees.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\System.GetBetOnDef.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\system.Z_DeleteAgreeIP.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\system.Z_DeleteSongs.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\system.Z_GetAgreeIP.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\system.Z_GetConfigs.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\system.Z_GetCountry.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\system.Z_GetMaintain.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\system.Z_GetMarquees.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\System.Z_GetMenu.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\system.Z_GetRole.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\system.Z_GetRoleGameSetting.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\system.Z_GetRoleMenu.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\system.Z_GetSongs.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\system.Z_GetUser.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\system.Z_GetUserLoginHistory.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\system.Z_InsertAgreeIP.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\system.Z_InsertConfigs.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\system.Z_InsertCountry.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\system.Z_InsertMaintain.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\system.Z_InsertMarquees.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\System.Z_InsertMenu.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\system.Z_InsertRole.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\system.Z_InsertRoleGameSetting.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\system.Z_InsertRoleMenu.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\system.Z_InsertSongs.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\system.Z_InsertUser.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\system.Z_InsertUserLoginHistory.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\system.Z_UpdateAgreeIP.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\system.Z_UpdateConfigs.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\system.Z_UpdateCountry.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\system.Z_UpdateMaintain.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\system.Z_UpdateMarquees.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\System.Z_UpdateMenu.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\system.Z_UpdateRole.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\system.Z_UpdateRoleGameSetting.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\system.Z_UpdateRoleMenu.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\system.Z_UpdateSongs.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\system.Z_UpdateUser.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\60_stored_procedures\system.Z_UpdateUserLoginHistory.StoredProcedure.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="database\opmc-db\99_Other\BU资料重置.sql" />
+    <Content Include="database\opmc-db\99_Other\QueryAllTableInfo.sql" />
+    <Content Include="database\opmc-db\99_Other\RebuildIndexes.sql" />
+    <Content Include="database\opmc-db\99_Other\tools.sql" />
+    <Content Include="database\opmc-db\99_Other\同步检查语法%28赔率%29.sql" />
+    <Content Include="database\opmc-db\99_Other\同步检查语法%28限额%29.sql" />
+    <Content Include="database\opmc-db\99_Other\把當下遊戲期號開盤.sql" />
+    <Content Include="database\opmc-db\99_Other\把當下遊戲期號開盤_2.sql" />
+    <Content Include="database\opmc-db\99_Other\根據賽程表開盤.sql" />
+    <Content Include="database\opmc-db\99_Other\長龍、遣漏驗証語法.sql" />
+    <Content Include="database\opmcReport-db\00_schema\Bu.Schema.sql" />
+    <Content Include="database\opmcReport-db\00_schema\Game.Schema.sql" />
+    <Content Include="database\opmcReport-db\00_schema\member.Schema.sql" />
+    <Content Include="database\opmcReport-db\00_schema\Report.Schema.sql" />
+    <Content Include="database\opmcReport-db\10_tables\Bu.Bu.Table.sql" />
+    <Content Include="database\opmcReport-db\10_tables\Game.Bets.Table.sql" />
+    <Content Include="database\opmcReport-db\10_tables\Game.BetsBak.Table.sql" />
+    <Content Include="database\opmcReport-db\10_tables\Game.BetTypeBetOnDef.Table.sql" />
+    <Content Include="database\opmcReport-db\10_tables\Game.BetTypePlayDef.Table.sql" />
+    <Content Include="database\opmcReport-db\10_tables\member.Member.Table.sql" />
+    <Content Include="database\opmcReport-db\20_initial_data\Bu.Bu.Data.sql" />
+    <Content Include="database\opmcReport-db\20_initial_data\Game.BetTypeBetOnDef.Data.sql" />
+    <Content Include="database\opmcReport-db\20_initial_data\Game.BetTypeBetOnDef_Official.Data.sql" />
+    <Content Include="database\opmcReport-db\20_initial_data\Game.BetTypePlayDef.Data.sql" />
+    <Content Include="database\opmcReport-db\20_initial_data\Game.BetTypePlayDef_Official.Data.sql" />
+    <Content Include="database\opmcReport-db\35_alters\changeBetTypePlayCodeStatus.sql" />
+    <Content Include="database\opmcReport-db\35_alters\changeBetTypePlayName.sql" />
+    <Content Include="database\opmcReport-db\35_alters\[自開彩][OPMC] 會員列表\Game.Bets.Table.sql" />
+    <Content Include="database\opmcReport-db\35_alters\[自開彩][OPMC] 會員列表\Game.GetBets.StoredProcedure.sql" />
+    <Content Include="database\opmcReport-db\35_alters\[自開彩][OPMC] 會員列表\Game.InsertBets.StoredProcedure.sql" />
+    <Content Include="database\opmcReport-db\35_alters\[自開彩][OPMC] 會員列表\Game.UpdateBets.StoredProcedure.sql" />
+    <Content Include="database\opmcReport-db\50_functions\dbo.LongIPToLocation.UserDefinedFunction.sql" />
+    <Content Include="database\opmcReport-db\50_functions\dbo.Split.UserDefinedFunction.sql" />
+    <Content Include="database\opmcReport-db\50_functions\dbo.ToLongIP.UserDefinedFunction.sql" />
+    <Content Include="database\opmcReport-db\60_stored_procedures\bu.CalcGameExpectBetOnStatistics.StoredProcedure.sql" />
+    <Content Include="database\opmcReport-db\60_stored_procedures\Bu.Z_GetBu.StoredProcedure.sql" />
+    <Content Include="database\opmcReport-db\60_stored_procedures\Bu.Z_InsertBu.StoredProcedure.sql" />
+    <Content Include="database\opmcReport-db\60_stored_procedures\Bu.Z_SyncBu.StoredProcedure.sql" />
+    <Content Include="database\opmcReport-db\60_stored_procedures\Bu.Z_UpdateBu.StoredProcedure.sql" />
+    <Content Include="database\opmcReport-db\60_stored_procedures\Game.BetBackup.StoredProcedure.sql" />
+    <Content Include="database\opmcReport-db\60_stored_procedures\Game.GetBetsClosedCount.sql" />
+    <Content Include="database\opmcReport-db\60_stored_procedures\Game.GetRealAndFakeAmountDataForCaculation.StoredProcedure.sql" />
+    <Content Include="database\opmcReport-db\60_stored_procedures\Game.Z_GetBets.StoredProcedure.sql" />
+    <Content Include="database\opmcReport-db\60_stored_procedures\Game.Z_GetBetsBak.StoredProcedure.sql" />
+    <Content Include="database\opmcReport-db\60_stored_procedures\Game.Z_GetBetTypeBetOnDef.StoredProcedure.sql" />
+    <Content Include="database\opmcReport-db\60_stored_procedures\Game.Z_GetBetTypePlayDef.StoredProcedure.sql" />
+    <Content Include="database\opmcReport-db\60_stored_procedures\Game.Z_InsertBets.StoredProcedure.sql" />
+    <Content Include="database\opmcReport-db\60_stored_procedures\Game.Z_InsertBetTypeBetOnDef.StoredProcedure.sql" />
+    <Content Include="database\opmcReport-db\60_stored_procedures\Game.Z_InsertBetTypePlayDef.StoredProcedure.sql" />
+    <Content Include="database\opmcReport-db\60_stored_procedures\Game.Z_SyncBets.StoredProcedure.sql" />
+    <Content Include="database\opmcReport-db\60_stored_procedures\Game.Z_SyncBetTypeBetOnDef.StoredProcedure.sql" />
+    <Content Include="database\opmcReport-db\60_stored_procedures\Game.Z_SyncBetTypePlayDef.StoredProcedure.sql" />
+    <Content Include="database\opmcReport-db\60_stored_procedures\Game.Z_UpdateBets.StoredProcedure.sql" />
+    <Content Include="database\opmcReport-db\60_stored_procedures\Game.Z_UpdateBetTypeBetOnDef.StoredProcedure.sql" />
+    <Content Include="database\opmcReport-db\60_stored_procedures\Game.Z_UpdateBetTypePlayDef.StoredProcedure.sql" />
+    <Content Include="database\opmcReport-db\60_stored_procedures\member.GetMemberLatestModified.StoredProcedure.sql" />
+    <Content Include="database\opmcReport-db\60_stored_procedures\member.InsertMember.StoredProcedure.sql" />
+    <Content Include="database\opmcReport-db\60_stored_procedures\Report.CheckAGReportForAPI.sql" />
+    <Content Include="database\opmcReport-db\60_stored_procedures\Report.DeleteBet.StoredProcedure.sql" />
+    <Content Include="database\opmcReport-db\60_stored_procedures\Report.GetBetProfitForBetTypePlayCode.StoredProcedure.sql" />
+    <Content Include="database\opmcReport-db\60_stored_procedures\Report.GetBetProfitForBu.StoredProcedure.sql" />
+    <Content Include="database\opmcReport-db\60_stored_procedures\Report.GetBetProfitForDate.StoredProcedure.sql" />
+    <Content Include="database\opmcReport-db\60_stored_procedures\Report.GetBetProfitForLotteryCode.StoredProcedure.sql" />
+    <Content Include="database\opmcReport-db\60_stored_procedures\Report.GetBetProfitForMember.StoredProcedure.sql" />
+    <Content Include="database\opmcReport-db\60_stored_procedures\Report.GetBetProfitForSettleBet.StoredProcedure.sql" />
+    <Content Include="database\opmcReport-db\60_stored_procedures\Report.GetBetReportForStatus.StoredProcedure.sql" />
+    <Content Include="database\opmcReport-db\60_stored_procedures\Report.GetLatestModifiedAtValue.StoredProcedure.sql" />
+    <Content Include="database\opmcReport-db\60_stored_procedures\Report.GetLotteryBetsBak.StoredProcedure.sql" />
+    <Content Include="database\opmcReport-db\60_stored_procedures\Report.InsertBet.StoredProcedure.sql" />
+    <Content Include="database\opmcReport-db\60_stored_procedures\Report.UpdateBet.StoredProcedure.sql" />
+    <Content Include="icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="database\localhost-db\20_initial_data\" />
+    <Folder Include="database\opmc-db\30_foreign_keys\" />
+    <Folder Include="database\opmc-db\32_indexes\" />
+    <Folder Include="database\opmc-db\40_views\" />
+    <Folder Include="Domain\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+</Project>
