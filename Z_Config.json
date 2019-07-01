@@ -6,7 +6,7 @@
     {
       "Name": "localhost-db-dev",
       "ScriptPath": "database\\localhost-db",
-      "ConnectString": "Data Source=.\\SQLEXPRESS;Initial Catalog=DEV_LuckyMilk;Persist Security Info=True;User ID=sa;Password=wolf3d",
+      "ConnectString": "ConnectionString...",
       "Strategy": [
         "base",
         "Dev"
@@ -18,7 +18,7 @@
     {
       "Name": "localhost-db-Qat",
       "ScriptPath": "database\\localhost-db",
-      "ConnectString": "Data Source=.\\SQLEXPRESS;Initial Catalog=DEV_LuckyMilk;Persist Security Info=True;User ID=sa;Password=wolf3d",
+      "ConnectString": "ConnectionString...",
       "Strategy": [
         "base",
         "Qat"
